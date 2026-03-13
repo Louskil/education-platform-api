@@ -7,7 +7,8 @@
     "dev": "zudoku dev",
     "build": "zudoku build",
     "preview": "zudoku preview",
-    "lint": "eslint"
+    "deploy": "npm run build && gh-pages -d dist",
+    "deploy:direct": "zudoku build && gh-pages -d dist"
   },
   "dependencies": {
     "react": ">=19.0.0",
@@ -18,9 +19,10 @@
     "@types/node": "^22",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "typescript": "^5",
-    "eslint": "^8",
     "@typescript-eslint/eslint-plugin": "^8",
-    "@typescript-eslint/parser": "^8"
+    "@typescript-eslint/parser": "^8",
+    "eslint": "^8",
+    "gh-pages": "^6.3.0",
+    "typescript": "^5"
   }
 }
