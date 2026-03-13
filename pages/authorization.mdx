@@ -1,0 +1,21 @@
+### `pages/authorization.mdx`
+```mdx
+---
+title: Авторизація
+sidebar_icon: lock
+---
+
+# Авторизація
+
+API використовує JWT (JSON Web Tokens) для автентифікації та авторизації запитів.
+
+## Отримання токена
+
+1. Зареєструйте додаток на платформі
+2. Отримайте client ID та client secret
+3. Виконайте запит до `/auth/token`:
+
+```bash
+curl -X POST https://api.education-platform.com/v1/auth/token \
+  -H "Content-Type: application/json" \
+  -d '{"client_id": "your_client_id", "client_secret": "your_client_secret"}'

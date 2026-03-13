@@ -1,0 +1,22 @@
+### `pages/sdk-usage.mdx`
+```mdx
+# Використання SDK
+
+## Приклади для Python
+
+```python
+from education_platform_client import ApiClient, Configuration
+from education_platform_client.api import courses_api
+
+# Налаштування клієнта
+config = Configuration(
+    host="https://api.education-platform.com/v1",
+    access_token="YOUR_JWT_TOKEN"
+)
+
+client = ApiClient(config)
+courses = courses_api.CoursesApi(client)
+
+# Отримання списку курсів
+response = courses.get_courses()
+print(response)

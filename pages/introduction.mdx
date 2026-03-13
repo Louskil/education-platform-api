@@ -1,16 +1,25 @@
 ---
-title: Welcome to Zudoku
+title: Вступ
+sidebar_icon: book-open
 ---
 
-Thanks for choosing to use Zudoku to power your API documentation!
+# Вступ до Education Platform API
 
-## Edit this page
+Ласкаво просимо до документації API освітньої платформи. Цей API дозволяє керувати курсами та студентами, а також записувати студентів на курси.
 
-To edit this page, open the `pages/introduction.mdx` file.
+## Про API
 
-## Configuration
+API побудовано на принципах REST та використовує стандартні HTTP методи:
+- `GET` - отримання даних
+- `POST` - створення нових ресурсів
+- `PUT` - оновлення існуючих ресурсів
+- `DELETE` - видалення ресурсів
 
-You can find the full configuration for your Zudoku site in the `zudoku.config.tsx` file.
+## Основні сутності
 
-For further information on how to customize your site, check out the
-[Zudoku documentation](https://zudoku.dev/docs).
+- **Course** - навчальний курс з інформацією про викладача, кредити та опис
+- **Student** - студент з персональними даними та списком курсів
+
+## Формати даних
+
+Всі запити та відповіді використовують формат JSON. Дати передаються у форматі ISO 8601.

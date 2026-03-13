@@ -1,0 +1,522 @@
+openapi: 3.0.0
+info:
+  title: Education Platform API
+  description: |
+    API для керування освітньою платформою. Дозволяє виконувати операції з курсами та студентами.
+
+    ## Основні можливості
+    * Управління курсами (створення, редагування, видалення)
+    * Управління студентами (реєстрація, оновлення профілю)
+    * Запис студентів на курси
+    * Перегляд списків студентів на курсах
+
+    ## Автентифікація
+    API використовує JWT токени для автентифікації. Отримайте токен через `/auth/login` (не входить в поточну специфікацію) та використовуйте його в заголовку `Authorization: Bearer {token}`.
+  contact:
+    name: Ваше Ім'я
+    url: https://github.com/yourusername
+    email: your.email@example.com
+  license:
+    name: MIT
+    url: https://opensource.org/licenses/MIT
+  version: 1.0.0
+servers:
+- url: https://api.education-platform.com/v1
+  description: Production server
+- url: http://localhost:3000/api/v1
+  description: Local development server
+security:
+- bearerAuth: []
+tags:
+- name: Courses
+  description: Операції з курсами
+- name: Students
+  description: Операції зі студентами
+- name: Enrollments
+  description: Управління записами на курси
+paths:
+  /courses:
+    get:
+      tags:
+      - Courses
+      summary: Отримати список всіх курсів
+      description: Повертає список курсів з підтримкою пагінації
+      parameters:
+      - name: page
+        in: query
+        description: Номер сторінки
+        required: false
+        schema:
+          minimum: 1
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        description: Кількість курсів на сторінці
+        required: false
+        schema:
+          maximum: 100
+          type: integer
+          default: 10
+      - name: instructor
+        in: query
+        description: Фільтрація за викладачем
+        required: false
+        schema:
+          type: string
+      responses:
+        "200":
+          description: Успішний запит
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200"
+        "500":
+          $ref: "#/components/responses/InternalServerError"
+    post:
+      tags:
+      - Courses
+      summary: Створити новий курс
+      description: Доступно тільки для адміністраторів
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CourseInput"
+        required: true
+      responses:
+        "201":
+          description: Курс успішно створено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+      security:
+      - bearerAuth: []
+  /courses/{courseId}:
+    get:
+      tags:
+      - Courses
+      summary: Отримати курс за ID
+      parameters:
+      - name: courseId
+        in: path
+        description: Унікальний ідентифікатор курсу
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Деталі курсу
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+      - Courses
+      summary: Оновити курс
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CourseInput"
+        required: true
+      responses:
+        "200":
+          description: Курс оновлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Course"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - bearerAuth: []
+    delete:
+      tags:
+      - Courses
+      summary: Видалити курс
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "204":
+          description: Курс успішно видалено
+        "401":
+          $ref: "#/components/responses/Unauthorized"
+        "403":
+          $ref: "#/components/responses/Forbidden"
+        "404":
+          $ref: "#/components/responses/NotFound"
+      security:
+      - bearerAuth: []
+  /courses/{courseId}/students:
+    get:
+      tags:
+      - Courses
+      - Enrollments
+      summary: "Отримати студентів, записаних на курс"
+      parameters:
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Список студентів на курсі
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Student"
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /students:
+    get:
+      tags:
+      - Students
+      summary: Отримати список студентів
+      parameters:
+      - name: page
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 10
+      responses:
+        "200":
+          description: Успішний запит
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/inline_response_200_1"
+    post:
+      tags:
+      - Students
+      summary: Створити нового студента
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentInput"
+        required: true
+      responses:
+        "201":
+          description: Студента створено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+  /students/{studentId}:
+    get:
+      tags:
+      - Students
+      summary: Отримати студента за ID
+      parameters:
+      - name: studentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "200":
+          description: Деталі студента
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    put:
+      tags:
+      - Students
+      summary: Оновити дані студента
+      parameters:
+      - name: studentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/StudentInput"
+        required: true
+      responses:
+        "200":
+          description: Дані оновлено
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Student"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    delete:
+      tags:
+      - Students
+      summary: Видалити студента
+      parameters:
+      - name: studentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "204":
+          description: Студента видалено
+        "404":
+          $ref: "#/components/responses/NotFound"
+  /students/{studentId}/courses/{courseId}:
+    post:
+      tags:
+      - Students
+      - Enrollments
+      summary: Записати студента на курс
+      parameters:
+      - name: studentId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      - name: courseId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+      responses:
+        "201":
+          description: Студента успішно записано на курс
+        "400":
+          description: Студент вже записаний на цей курс
+        "404":
+          $ref: "#/components/responses/NotFound"
+components:
+  schemas:
+    Course:
+      required:
+      - id
+      - instructor
+      - title
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: 550e8400-e29b-41d4-a716-446655440000
+        title:
+          type: string
+          example: Вступ до програмування
+        description:
+          type: string
+          example: Базовий курс з основ програмування на Python
+        instructor:
+          type: string
+          example: Олена Петренко
+        credits:
+          maximum: 10
+          minimum: 1
+          type: integer
+          example: 3
+        createdAt:
+          type: string
+          format: date-time
+    CourseInput:
+      required:
+      - instructor
+      - title
+      type: object
+      properties:
+        title:
+          maxLength: 200
+          minLength: 3
+          type: string
+        description:
+          maxLength: 2000
+          type: string
+        instructor:
+          minLength: 2
+          type: string
+        credits:
+          maximum: 10
+          minimum: 1
+          type: integer
+    Student:
+      required:
+      - email
+      - firstName
+      - id
+      - lastName
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+          example: Іван
+        lastName:
+          type: string
+          example: Шевченко
+        email:
+          type: string
+          format: email
+          example: ivan.shevchenko@example.com
+        enrollmentDate:
+          type: string
+          format: date
+        courses:
+          type: array
+          items:
+            type: string
+            format: uuid
+    StudentInput:
+      required:
+      - email
+      - firstName
+      - lastName
+      type: object
+      properties:
+        firstName:
+          minLength: 2
+          type: string
+        lastName:
+          minLength: 2
+          type: string
+        email:
+          type: string
+          format: email
+        enrollmentDate:
+          type: string
+          format: date
+    Error:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        details:
+          type: string
+    inline_response_200:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Course"
+        total:
+          type: integer
+          description: Загальна кількість курсів
+        page:
+          type: integer
+        limit:
+          type: integer
+    inline_response_200_1:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Student"
+        total:
+          type: integer
+        page:
+          type: integer
+        limit:
+          type: integer
+  responses:
+    BadRequest:
+      description: Некоректний запит
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 400
+            message: Помилка валідації даних
+    Unauthorized:
+      description: Відсутня автентифікація
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 401
+            message: Необхідно авторизуватися
+    Forbidden:
+      description: Недостатньо прав
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 403
+            message: Доступ заборонено
+    NotFound:
+      description: Ресурс не знайдено
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 404
+            message: Ресурс не знайдено
+    InternalServerError:
+      description: Внутрішня помилка сервера
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+          example:
+            code: 500
+            message: Сталася внутрішня помилка сервера
+  securitySchemes:
+    bearerAuth:
+      type: http
+      description: "Використовуйте JWT токен у форматі \"Bearer {token}\""
+      scheme: bearer
+      bearerFormat: JWT
