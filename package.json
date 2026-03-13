@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "zudoku dev",
     "build": "zudoku build",
-    "preview": "zudoku preview",
+    "preview": "zudoku preview --host",
     "deploy": "npm run build && gh-pages -d dist",
     "deploy:direct": "zudoku build && gh-pages -d dist"
   },
