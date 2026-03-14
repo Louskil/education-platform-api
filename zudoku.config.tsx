@@ -21,8 +21,8 @@ const config: ZudokuConfig = {
           label: "Початок роботи",
           icon: "sparkles",
           items: [
-            "/education-platform-api/introduction",                    // Простий шлях до сторінки
-            "/education-platform-api/installation",                     // Інсталяція
+            "/introduction",                    // Простий шлях до сторінки
+            "/installation",                     // Інсталяція
             "/authorization",                     // Авторизація
           ],
         },
@@ -35,9 +35,9 @@ const config: ZudokuConfig = {
               type: "link",
               //icon: "api",
               label: "API Reference",
-              to: "/education-platform-api/api",
+              to: "/api",
             },
-            "/education-platform-api/sdk-usage",                         // Використання SDK
+            "/sdk-usage",                         // Використання SDK
           ],
         },
         {
