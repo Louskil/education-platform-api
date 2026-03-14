@@ -3,16 +3,13 @@ import type { ZudokuConfig } from "zudoku";
 const config: ZudokuConfig = {
   site: {
     title: "Освітня Платформа API",
-    description: "Документація API для керування курсами та студентами",
+    //description: "Документація API для керування курсами та студентами",
     logo: {
       src: { light: "/logo-light.svg", dark: "/logo-dark.svg" },
       alt: "Education Platform API",
       width: "130px",
     },
   },
-
-  // Додайте assetPrefix для GitHub Pages
-  assetPrefix: "/education-platform-api-docs/", // Назва вашого репозиторію
 
   navigation: [
     {
@@ -24,9 +21,9 @@ const config: ZudokuConfig = {
           label: "Початок роботи",
           icon: "sparkles",
           items: [
-            "/introduction",
-            "/installation",
-            "/authorization",
+            "/education-platform-api/introduction",                    // Простий шлях до сторінки
+            "/education-platform-api/installation",                     // Інсталяція
+            "/authorization",                     // Авторизація
           ],
         },
         {
@@ -36,11 +33,11 @@ const config: ZudokuConfig = {
           items: [
             {
               type: "link",
-              icon: "api",
+              //icon: "api",
               label: "API Reference",
-              to: "/api",
+              to: "/education-platform-api/api",
             },
-            "/sdk-usage",
+            "/education-platform-api/sdk-usage",                         // Використання SDK
           ],
         },
         {
@@ -49,7 +46,7 @@ const config: ZudokuConfig = {
           collapsible: false,
           icon: "link",
           items: [
-            "/about",
+            "/about",                              // Про автора
             {
               type: "link",
               icon: "github",
@@ -72,7 +69,7 @@ const config: ZudokuConfig = {
   apis: [
     {
       type: "file",
-      input: "./openapi.yaml",
+      input: "./openapi.yaml",  // Змінено шлях на кореневий
       path: "/api",
     },
   ],
